@@ -53,7 +53,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            killall node
             find /app/blog-backend -mindepth 1 ! -regex '^/app/blog-backend/dist\(/.*\)?' -delete
             cd /app
             mkdir /app/tmp
@@ -62,4 +61,4 @@ jobs:
             rm -rf /app/tmp
             cd blog-backend
             npm i
-            nodemon index.js &
+            pm2 delete index.js 2> /dev/null || true &&  pm2 start index.js --watch
