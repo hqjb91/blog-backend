@@ -21,7 +21,7 @@ module.exports = () => {
     /**
      * Create article
      */
-    router.post('/article', async (req, res) => {
+    router.post('', async (req, res) => {
         const { title, summary, content, date, category, tags, username } = req.body;
         articles.push({
             id: articles[articles.lastIndexOf].id+1,
@@ -33,16 +33,16 @@ module.exports = () => {
     /**
      * Get list of articles
      */
-    router.get('/article', async (req, res) => {
+    router.get('', async (req, res) => {
         res.status(200).json({success: true, articles});
     });
 
-    /**
-     * Get specific article
-     */
-    router.get('/article', async (req, res) => {
+    // /**
+    //  * Get specific article
+    //  */
+    // router.get('', async (req, res) => {
 
-    });
+    // });
 
     return router;
 }

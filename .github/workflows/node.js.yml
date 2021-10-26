@@ -52,6 +52,7 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
+          command_timeout: 200m
           script: |
             killall node
             find /app/blog-backend -mindepth 1 ! -regex '^/app/blog-backend/dist\(/.*\)?' -delete
