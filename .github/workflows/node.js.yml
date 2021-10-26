@@ -54,6 +54,8 @@ jobs:
           port: 22
           script: |
             cd /app
-            git clone https://github.com/hqjb91/blog-backend.git
+            mkdir /app/tmp
+            git clone https://github.com/hqjb91/blog-backend.git /app/tmp
+            mv /app/tmp/* /app/blog-backend
             cd blog-backend
             nodemon index.js
