@@ -61,4 +61,5 @@ jobs:
             mv /app/tmp/* /app/blog-backend
             rm -rf /app/tmp
             cd blog-backend
+            npm i
             nodemon index.js &
