@@ -53,9 +53,12 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
+            killall node
+            find /app/blog-backend -mindepth 1 ! -regex '^/app/blog-backend/dist\(/.*\)?' -delete
             cd /app
             mkdir /app/tmp
             git clone https://github.com/hqjb91/blog-backend.git /app/tmp
             mv /app/tmp/* /app/blog-backend
+            rm -rf /app/tmp
             cd blog-backend
             nodemon index.js
