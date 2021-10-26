@@ -1,8 +1,11 @@
-const { application } = require('express');
 const express = require('express');
-
 const app = express();
 
-app.listen(4200, () => {
-    console.log(`Server started`);
+const PORT = 80;
+
+const distDir = __dirname + "/dist/blog-frontend";
+app.use(express.static(distDir));
+
+app.listen(PORT, () => {
+    console.log(`Server started on port: ${PORT}`);
 });
