@@ -3,7 +3,6 @@
  */
 const express = require('express');
 const compression = require('compression');
-const helmet = require('helmet');
 const path = require('path');
 
 const app = express();
@@ -19,7 +18,6 @@ const distDir = path.join(__dirname, "/dist/blog-frontend");
  */
 app.use(express.static(distDir)); // Serve angular frontend
 app.use(compression()); // Compress all routes
-app.use(helmet()); // Prevent against well known vulnerabilities
 
 /**
  * Start server on port
