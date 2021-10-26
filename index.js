@@ -4,6 +4,7 @@
 const express = require('express');
 const compression = require('compression');
 const helmet = require('helmet');
+const path = require('path');
 
 const app = express();
 
