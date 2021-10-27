@@ -39,8 +39,8 @@ app.use(express.static(distDir)); // Serve angular frontend
 app.use(compression()); // Compress all routes
 app.use(express.json({ limit: '50mb' })); // Limit json sent to server
 
-app.use('/api/user', userRoutes);
-app.use('/api/article', articleRoutes);
+app.use('/api/user', userRoutes());
+app.use('/api/article', articleRoutes());
 
 /**
  * Connect to MongoDB and Start server on port

@@ -16,7 +16,9 @@ module.exports = () => {
      * }
      */
 
-    const articles = [];
+    const articles = [
+        {id: 1, title: "test", summary: "sample summary", content: "<h1>Bla bla bla</h1>", date: new Date(), category: "test", tags: ["1"], username: "me" }
+    ];
 
     /**
      * Create article
