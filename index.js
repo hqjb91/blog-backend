@@ -39,6 +39,17 @@ const mongoClient = new MongoClient(process.env.MONGO_CLIENT_URL, {
 /**
  * Middleware
  */
+app.use((req, res, next) => { // Force redirect to https
+    if (process.env.NODE_ENV === 'production') {
+        if (req.headers.host === 'hequanjie.com')
+            return res.redirect(301, 'https://www.hequanjie.com');
+        if (req.headers['x-forwarded-proto'] !== 'https')
+            return res.redirect('https://' + req.headers.host + req.url);
+        else
+            return next();
+    } else
+        return next();
+});
 app.use(express.static(distDir)); // Serve angular frontend
 app.use(compression()); // Compress all routes
 app.use(express.json({ limit: '50mb' })); // Limit json sent to server
