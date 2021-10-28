@@ -41,8 +41,8 @@ const mongoClient = new MongoClient(process.env.MONGO_CLIENT_URL, {
  */
 app.use((req, res, next) => { // Force redirect to https
     if (process.env.NODE_ENV === 'production') {
-        if (req.headers.host === 'hequanjie.com')
-            return res.redirect(301, 'https://www.hequanjie.com');
+        if (req.headers.host === 'hequanjie.com' || 'www.hequanjie.com')
+            return res.redirect(301, 'https://hequanjie.com');
         if (req.headers['x-forwarded-proto'] !== 'https')
             return res.redirect('https://' + req.headers.host + req.url);
         else
