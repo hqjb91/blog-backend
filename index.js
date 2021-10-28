@@ -28,6 +28,7 @@ const articleRoutes = require('./routes/article');
 const HTTPS_PORT = parseInt(process.env.HTTPS_PORT) || 443;
 const HTTP_PORT = parseInt(process.env.HTTP_PORT) || 80;
 const distDir = path.join(__dirname, "/dist/blog-frontend");
+const staticDir = path.join(__dirname, "/static");
 
 /**
  * Initialize MongoDB Client
@@ -42,6 +43,7 @@ const mongoClient = new MongoClient(process.env.MONGO_CLIENT_URL, {
  */
 app.use('/', httpsRedirect()); // Https redirection
 app.use(express.static(distDir)); // Serve angular frontend
+app.use(express.static(staticDir)); // Serve static files
 app.use(compression()); // Compress all routes
 app.use(express.json({ limit: '50mb' })); // Limit json sent to server
 
