@@ -52,22 +52,18 @@ module.exports = () => {
 
     /**
      * Get list of articles with query params of limit and offset for pagination
+     * if query param of id is provided return specific article
      */
     router.get('', async (req, res) => {
-        const { limit, offset } = req.query;
+        const { limit, offset, id } = req.query;
         const articlesSlice = articles.slice(parseInt(offset), parseInt(offset)+parseInt(limit));
 
+        if (id) {
+            const article = articles.find(article => article.id == id);
+            res.status(200).json({success: true, article});
+        }
+
         res.status(200).json({success: true, articlesSlice});
-    });
-
-    /**
-     * Get specific article by query param of ID
-     */
-    router.get('', async (req, res) => {
-        const { id } = req.query;
-        const article = articles.find( article => article.id == id );
-
-        res.status(200).json({success: true, article});
     });
 
     /**
