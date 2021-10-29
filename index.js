@@ -9,6 +9,7 @@ const path = require('path');
 const https = require('https');
 const http = require('http');
 const httpsRedirect = require('express-https-redirect');
+const cors = require('cors');
 
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
@@ -46,6 +47,7 @@ app.use(express.static(distDir)); // Serve angular frontend
 app.use(express.static(staticDir)); // Serve static files
 app.use(compression()); // Compress all routes
 app.use(express.json({ limit: '50mb' })); // Limit json sent to server
+app.use(cors()); // Allow for CORS
 
 app.use('/api/user', userRoutes());
 app.use('/api/article', articleRoutes());
