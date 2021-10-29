@@ -74,5 +74,31 @@ module.exports = () => {
         res.status(200).json({success: true, length});
     });
 
+    /**
+     * Get a map of the tags
+     */
+    router.get('/tags', async (req, res) => {  
+        const tags = {};
+        articles.map( article => {
+            for(tag in article.tags) {
+                if (tags[tag] == null)  tags[tag] = 1
+                else tags[tag]++;
+            }
+        }); 
+        res.status(200).json({success: true, tags});
+    });
+
+    /**
+     * Get a map of the categories
+     */
+    router.get('/categories', async (req, res) => {  
+        const categories = {};
+        articles.map( article => {
+            if (categories[article.category] == null)  categories[article.category] = 1
+            else categories[article.category]++;
+        }); 
+        res.status(200).json({success: true, categories});
+    });
+
     return router;
 }
