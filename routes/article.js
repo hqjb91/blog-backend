@@ -35,7 +35,27 @@ module.exports = () => {
         {id: 15, title: "test15", summary: "sample summary", content: "<h1>Bla bla bla</h1>", image: "https://material.angular.io/assets/img/examples/shiba2.jpg", date: new Date(), category: "test3", tags: ["1"], username: "me" },
         {id: 16, title: "test16", summary: "sample summary", content: "<h1>Bla bla bla</h1>", date: new Date(), category: "test2", tags: ["3"], username: "me" },
         {id: 17, title: "test17", summary: "sample summary", content: "<h1>Bla bla bla</h1>", date: new Date(), category: "test", tags: ["4"], username: "me" },
-        {id: 18, title: "test18", summary: "sample summary", content: "<h1>Bla bla bla</h1>", image: "https://material.angular.io/assets/img/examples/shiba2.jpg", date: new Date(), category: "test4", tags: ["1"], username: "me" }
+        {id: 18, title: "test18", summary: "sample summary", content: "<h1>Bla bla bla</h1>", image: "https://material.angular.io/assets/img/examples/shiba2.jpg", date: new Date(), category: "test4", tags: ["1"], username: "me" },
+        {id: 9, title: "test9", summary: "sample summary", content: "<h1>Bla bla bla</h1>", image: "https://material.angular.io/assets/img/examples/shiba2.jpg", date: new Date(), category: "test3", tags: ["1"], username: "me" },
+        {id: 10, title: "test10", summary: "sample summary", content: "<h1>Bla bla bla</h1>", date: new Date(), category: "test2", tags: ["3"], username: "me" },
+        {id: 11, title: "test11", summary: "sample summary", content: "<h1>Bla bla bla</h1>", date: new Date(), category: "test", tags: ["4"], username: "me" },
+        {id: 12, title: "test12", summary: "sample summary", content: "<h1>Bla bla bla</h1>", image: "https://material.angular.io/assets/img/examples/shiba2.jpg", date: new Date(), category: "test4", tags: ["1"], username: "me" },
+        {id: 13, title: "test13", summary: "sample summary", content: "<h1>Bla bla bla</h1>", image: "https://material.angular.io/assets/img/examples/shiba2.jpg", date: new Date(), category: "test", tags: ["1", "2", "3"], username: "me" },
+        {id: 14, title: "test14", summary: "sample summary", content: "<h1>Bla bla bla</h1>", date: new Date(), category: "test", tags: ["2"], username: "me" },
+        {id: 15, title: "test15", summary: "sample summary", content: "<h1>Bla bla bla</h1>", image: "https://material.angular.io/assets/img/examples/shiba2.jpg", date: new Date(), category: "test3", tags: ["1"], username: "me" },
+        {id: 16, title: "test16", summary: "sample summary", content: "<h1>Bla bla bla</h1>", date: new Date(), category: "test2", tags: ["3"], username: "me" },
+        {id: 17, title: "test17", summary: "sample summary", content: "<h1>Bla bla bla</h1>", date: new Date(), category: "test", tags: ["4"], username: "me" },
+        {id: 18, title: "test18", summary: "sample summary", content: "<h1>Bla bla bla</h1>", image: "https://material.angular.io/assets/img/examples/shiba2.jpg", date: new Date(), category: "test4", tags: ["1"], username: "me" },
+        {id: 9, title: "test9", summary: "sample summary", content: "<h1>Bla bla bla</h1>", image: "https://material.angular.io/assets/img/examples/shiba2.jpg", date: new Date(), category: "test3", tags: ["1"], username: "me" },
+        {id: 10, title: "test10", summary: "sample summary", content: "<h1>Bla bla bla</h1>", date: new Date(), category: "test2", tags: ["3"], username: "me" },
+        {id: 11, title: "test11", summary: "sample summary", content: "<h1>Bla bla bla</h1>", date: new Date(), category: "test", tags: ["4"], username: "me" },
+        {id: 12, title: "test12", summary: "sample summary", content: "<h1>Bla bla bla</h1>", image: "https://material.angular.io/assets/img/examples/shiba2.jpg", date: new Date(), category: "test4", tags: ["1"], username: "me" },
+        {id: 13, title: "test13", summary: "sample summary", content: "<h1>Bla bla bla</h1>", image: "https://material.angular.io/assets/img/examples/shiba2.jpg", date: new Date(), category: "test", tags: ["1", "2", "3"], username: "me" },
+        {id: 14, title: "test14", summary: "sample summary", content: "<h1>Bla bla bla</h1>", date: new Date(), category: "test", tags: ["2"], username: "me" },
+        {id: 15, title: "test15", summary: "sample summary", content: "<h1>Bla bla bla</h1>", image: "https://material.angular.io/assets/img/examples/shiba2.jpg", date: new Date(), category: "test3", tags: ["1"], username: "me" },
+        {id: 16, title: "test16", summary: "sample summary", content: "<h1>Bla bla bla</h1>", date: new Date(), category: "test2", tags: ["3"], username: "me" },
+        {id: 17, title: "test17", summary: "sample summary", content: "<h1>Bla bla bla</h1>", date: new Date(), category: "test", tags: ["4"], username: "me" },
+        {id: 18, title: "test18", summary: "sample summary", content: "<h1>Bla bla bla</h1>", image: "https://material.angular.io/assets/img/examples/shiba2.jpg", date: new Date(), category: "test4", tags: ["1"], username: "me" },
     ];
 
     /**
@@ -53,14 +73,29 @@ module.exports = () => {
     /**
      * Get list of articles with query params of limit and offset for pagination
      * if query param of id is provided return specific article
+     * if query param of tag is not empty string return articles with the tag
+     * if query param of category is not empty string return articles with the category
      */
     router.get('', async (req, res) => {
-        const { limit, offset, id } = req.query;
+        const { limit, offset, id, tag, category } = req.query;
         const articlesSlice = articles.slice(parseInt(offset), parseInt(offset)+parseInt(limit));
 
         if (id) {
             const article = articles.find(article => article.id == id);
-            res.status(200).json({success: true, article});
+            return res.status(200).json({success: true, article});
+        }
+
+        if ( tag != '' ) {
+            console.log(tag.toString());
+            const articlesSlice = articles.filter(article => article.tags.includes(tag)).slice(parseInt(offset), parseInt(offset)+parseInt(limit));
+            return res.status(200).json({success: true, articlesSlice});
+        }
+
+        if ( category != '' ) {
+            console.log(articles[0].category);
+            // console.log(category)
+            const articlesSlice = articles.filter(article => article.category == category.toString()).slice(parseInt(offset), parseInt(offset)+parseInt(limit));
+            return res.status(200).json({success: true, articlesSlice});
         }
 
         res.status(200).json({success: true, articlesSlice});
@@ -70,7 +105,17 @@ module.exports = () => {
      * Get total number of articles
      */
     router.get('/length', async (req, res) => {  
-        const length = articles.length; 
+        let length = articles.length; 
+        const { tag, category } = req.query;
+
+        if ( tag != '') {
+            length = articles.filter(article => article.tags.includes(tag)).length;
+        }
+
+        if ( category != '') {
+            length = articles.filter(article => article.category == category).length;
+        }
+        
         res.status(200).json({success: true, length});
     });
 
