@@ -52,12 +52,6 @@ module.exports = (mongoClient) => {
         const { limit, offset, id, tag, category } = req.query;
 
         try {
-            console.log(req.query);
-            const articlesSlice = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION).find()
-                                        .limit(parseInt(limit)).skip(parseInt(offset))
-                                        .sort({date: -1})
-                                        .toArray();
-
             if (id) {
                 console.log(id);
                 const article = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION)
@@ -65,6 +59,11 @@ module.exports = (mongoClient) => {
                 if(article)
                     return res.status(200).json({success: true, article});
             }
+
+            const articlesSlice = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION).find()
+                                        .limit(parseInt(limit)).skip(parseInt(offset))
+                                        .sort({date: -1})
+                                        .toArray();
 
             if ( tag != '' ) {
                const articlesSlice = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION)
