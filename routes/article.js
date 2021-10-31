@@ -1,7 +1,9 @@
 const express = require('express');
+const { DB_NAME, ARTICLE_COLLECTION } = require('../utils/constants');
 const router = express.Router();
+const ObjectId = require('mongodb').ObjectID;
 
-module.exports = () => {
+module.exports = (mongoClient) => {
 
     /**
      * interface Article {
@@ -27,12 +29,17 @@ module.exports = () => {
      * Create article
      */
     router.post('', async (req, res) => {
-        const { title, summary, content, date, category, tags, username } = req.body;
-        articles.push({
-            id: articles[articles.lastIndexOf].id+1,
-            title, summary, content, date, category, tags, username 
-        });
-        res.status(200).json({success: true});
+        const { title, summary, content, date, category, tags, username, image } = req.body;
+
+        try {
+            const result = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION)
+                                .insertOne({
+                                    title, summary, content, image, date, category, tags, username 
+                                });
+            res.status(200).json({success: true, result});
+        } catch (e) {
+            res.status(500).json({success: false, error: e.message});
+        }
     });
 
     /**
@@ -43,68 +50,140 @@ module.exports = () => {
      */
     router.get('', async (req, res) => {
         const { limit, offset, id, tag, category } = req.query;
-        const articlesSlice = articles.slice(parseInt(offset), parseInt(offset)+parseInt(limit));
 
-        if (id) {
-            const article = articles.find(article => article.id == id);
-            return res.status(200).json({success: true, article});
+        try {
+            console.log(req.query);
+            const articlesSlice = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION).find()
+                                        .limit(parseInt(limit)).skip(parseInt(offset))
+                                        .sort({date: -1})
+                                        .toArray();
+
+            if (id) {
+                console.log(id);
+                const article = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION)
+                                        .findOne({_id: ObjectId(id)});
+                if(article)
+                    return res.status(200).json({success: true, article});
+            }
+
+            if ( tag != '' ) {
+               const articlesSlice = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION)
+                .find({
+                    tags: { $elemMatch: { $eq: tag } }
+                })
+                .limit(parseInt(limit)).skip(parseInt(offset))
+                .sort({date: -1})
+                .toArray();
+                
+                return res.status(200).json({success: true, articlesSlice});
+            }
+
+            if ( category != '' ) {
+               const articlesSlice = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION)
+                .find({
+                    category: { $eq: category }
+                })
+                .limit(parseInt(limit)).skip(parseInt(offset))
+                .sort({date: -1})
+                .toArray();
+                
+                return res.status(200).json({success: true, articlesSlice});
+            }
+
+            res.status(200).json({success: true, articlesSlice});
+        } catch(e) {
+            res.status(500).json({success: false, error: e.message});
         }
-
-        if ( tag != '' ) {
-            const articlesSlice = articles.filter(article => article.tags.includes(tag)).slice(parseInt(offset), parseInt(offset)+parseInt(limit));
-            return res.status(200).json({success: true, articlesSlice});
-        }
-
-        if ( category != '' ) {
-            const articlesSlice = articles.filter(article => article.category == category.toString()).slice(parseInt(offset), parseInt(offset)+parseInt(limit));
-            return res.status(200).json({success: true, articlesSlice});
-        }
-
-        res.status(200).json({success: true, articlesSlice});
     });
 
     /**
      * Get total number of articles
      */
     router.get('/length', async (req, res) => {  
-        let length = articles.length; 
         const { tag, category } = req.query;
 
-        if ( tag != '') {
-            length = articles.filter(article => article.tags.includes(tag)).length;
-        }
+        try {
+            let length = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION).count(); 
 
-        if ( category != '') {
-            length = articles.filter(article => article.category == category).length;
+            if ( tag != '' ) {
+                length = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION)
+                .find({
+                    tags: { $elemMatch: { $eq: tag } }
+                })
+                .count();
+            }
+
+            if ( category != '' ) {
+                length = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION)
+                .find({
+                    category: { $eq: category }
+                })
+                .count();
+            }
+            
+            res.status(200).json({success: true, length});
+        } catch(e) {
+            res.status(500).json({success: false, error: e.message});
         }
-        
-        res.status(200).json({success: true, length});
     });
 
     /**
      * Get a map of the tags
      */
     router.get('/tags', async (req, res) => {  
-        const tags = {};
-        articles.map( article => {
-            for(let tag of article.tags) {
-                if (tags[tag] == null)  tags[tag] = 1
-                else tags[tag]++;
-            }
-        }); 
-        res.status(200).json({success: true, tags});
+        /**
+         * e.g. 
+         * tags = {
+         *  test1 : 2,
+         *  test2 : 3
+         * }
+         */
+        try {
+            const tagsResults = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION)
+            .aggregate([
+                {$unwind:"$tags"}, // Unwind the tags array
+                {$group:{"_id":"$tags","count":{$sum:1}}}, // Group by the tags field, get the count using $sum
+                {$group:{"_id":null,"tags_details":{$push:{"tag":"$_id", // Group once again to get consolidated array
+                                                            "count":"$count"}}}},
+                {$project:{"_id":0,"tags_details":1}}
+                ]).toArray();
+
+            const tags = {};
+            tagsResults[0]['tags_details'].map( tagDetail => tags[tagDetail.tag] = tagDetail.count );
+
+            res.status(200).json({success: true, tags});
+        } catch (e) {
+            res.status(500).json({success: false, error: e.message});
+        }
     });
 
     /**
      * Get a map of the categories
      */
     router.get('/categories', async (req, res) => {  
-        const categories = {};
-        articles.map( article => {
-            if (categories[article.category] == null)  categories[article.category] = 1
-            else categories[article.category]++;
-        }); 
-        res.status(200).json({success: true, categories});
+        /**
+         * e.g. 
+         * categories = {
+         *  test1 : 2,
+         *  test2 : 3
+         * }
+         */
+        try {
+            const categoriesResults = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION)
+            .aggregate([
+                {$group:{"_id":"$category","count":{$sum:1}}}, // Group by the tags field, get the count using $sum
+                {$group:{"_id":null,"categories_details":{$push:{"category":"$_id", // Group once again to get consolidated array
+                                                            "count":"$count"}}}},
+                {$project:{"_id":0,"categories_details":1}}
+                ]).toArray();
+
+            const categories = {};
+            categoriesResults[0]['categories_details'].map( categoryDetail => categories[categoryDetail.category] = categoryDetail.count );
+
+            res.status(200).json({success: true, categories});
+        } catch (e) {
+            res.status(500).json({success: false, error: e.message});
+        }
     });
 
     return router;
