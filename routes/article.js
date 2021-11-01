@@ -21,7 +21,7 @@ module.exports = (mongoClient) => {
 
     // Hardcoded article for testing html and javascript content
     const articles = [
-        {id: 1, title: "Mechanical Engineering - Pump Sizing", summary: "When selecting a pump either for Air-Conditioning and Mechanical Ventilation services (such as chilled water pumps) or Plumbing and Sanitary services (such as domestic water pumps), the steps are similar and relatively straightforward.", 
+        {title: "Mechanical Engineering - Pump Sizing", summary: "When selecting a pump either for Air-Conditioning and Mechanical Ventilation services (such as chilled water pumps) or Plumbing and Sanitary services (such as domestic water pumps), the steps are similar and relatively straightforward.", 
         content: `<div><p>When selecting a pump either for Air-Conditioning and Mechanical Ventilation services (such as chilled water pumps) or Plumbing and Sanitary services (such as domestic water pumps), the steps are similar and relatively straightforward :</p><ol><li>Determine the flow rate required</li><li>Utilize the Steady Flow Energy Equation to derive the necessary pump head</li><li>Determine the power required</li></ol><hr>`, image: "", date: new Date(2021, 10, 31), category: "Mechanical Engineering", tags: ["Mechanical Engineering", "Fluid Dynamics", "Pump sizing"], username: "He Quanjie" },
     ];
 
@@ -62,7 +62,7 @@ module.exports = (mongoClient) => {
 
             const articlesSlice = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION).find()
                                         .limit(parseInt(limit)).skip(parseInt(offset))
-                                        .sort({date: -1})
+                                        .sort({"_id": -1})
                                         .toArray();
 
             if ( tag != '' ) {
@@ -71,7 +71,7 @@ module.exports = (mongoClient) => {
                     tags: { $elemMatch: { $eq: tag } }
                 })
                 .limit(parseInt(limit)).skip(parseInt(offset))
-                .sort({date: -1})
+                .sort({"_id": -1})
                 .toArray();
                 
                 return res.status(200).json({success: true, articlesSlice});
@@ -83,7 +83,7 @@ module.exports = (mongoClient) => {
                     category: { $eq: category }
                 })
                 .limit(parseInt(limit)).skip(parseInt(offset))
-                .sort({date: -1})
+                .sort({"_id": -1})
                 .toArray();
                 
                 return res.status(200).json({success: true, articlesSlice});
