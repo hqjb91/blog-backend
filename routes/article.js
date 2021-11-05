@@ -2,6 +2,7 @@ const express = require('express');
 const { DB_NAME, ARTICLE_COLLECTION } = require('../utils/constants');
 const router = express.Router();
 const ObjectId = require('mongodb').ObjectID;
+const passport = require('passport');
 
 module.exports = (mongoClient) => {
 
@@ -28,7 +29,7 @@ module.exports = (mongoClient) => {
     /**
      * Create article
      */
-    router.post('', async (req, res) => {
+    router.post('', passport.authenticate('jwt', { session: false }), async (req, res) => {
         const { title, summary, content, date, category, tags, username, image } = req.body;
 
         try {
@@ -53,7 +54,6 @@ module.exports = (mongoClient) => {
 
         try {
             if (id) {
-                console.log(id);
                 const article = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION)
                                         .findOne({_id: ObjectId(id)});
                 if(article)
