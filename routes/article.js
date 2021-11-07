@@ -33,11 +33,15 @@ module.exports = (mongoClient) => {
         const { title, summary, content, date, category, tags, username, image } = req.body;
 
         try {
-            const result = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION)
-                                .insertOne({
-                                    title, summary, content, image, date, category, tags, username 
-                                });
-            res.status(200).json({success: true, result});
+            if (req.user.role === 'admin') {
+                const result = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION)
+                                    .insertOne({
+                                        title, summary, content, image, date, category, tags, username 
+                                    });
+                res.status(200).json({success: true, result});
+            } else {
+                res.status(403).json({success: false, error: "Unauthorized. Role needs to be admin"});
+            }
         } catch (e) {
             res.status(500).json({success: false, error: e.message});
         }
