@@ -32,10 +32,7 @@ module.exports = (mongoClient) => {
     router.post('', passport.authenticate('jwt', { session: false }), async (req, res) => {
         const { title, summary, content, date, category, tags, username, image } = req.body;
 
-        console.log(tags)
-        console.log(decodeURIComponent(tags))
-        tags = JSON.parse("[" + decodeURIComponent(tags) + "]");
-        console.log(tags)
+        tags = decodeURIComponent(tags).split(",");
 
         try {
             if (req.user.role === 'admin') {
