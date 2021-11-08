@@ -32,6 +32,8 @@ module.exports = (mongoClient) => {
     router.post('', passport.authenticate('jwt', { session: false }), async (req, res) => {
         const { title, summary, content, date, category, tags, username, image } = req.body;
 
+        tags = JSON.parse("[" + tags + "]");
+
         try {
             if (req.user.role === 'admin') {
                 const result = await mongoClient.db(DB_NAME).collection(ARTICLE_COLLECTION)
