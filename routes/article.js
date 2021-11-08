@@ -30,7 +30,7 @@ module.exports = (mongoClient) => {
      * Create article
      */
     router.post('', passport.authenticate('jwt', { session: false }), async (req, res) => {
-        const { title, summary, content, date, category, tags, username, image } = req.body;
+        let { title, summary, content, date, category, tags, username, image } = req.body;
 
         tags = decodeURIComponent(tags).split(",");
 
