@@ -30,8 +30,8 @@ const articleRoutes = require('./routes/article');
 /**
  * Initialize variables
  */
-const HTTPS_PORT = parseInt(process.env.HTTPS_PORT) || 443;
-const HTTP_PORT = parseInt(process.env.HTTP_PORT) || 80;
+const HTTPS_PORT = parseInt(process.env.HTTPS_BACKEND_PORT) || 8443;
+const HTTP_PORT = parseInt(process.env.HTTP_BACKEND_PORT) || 880;
 const distDir = path.join(__dirname, "/dist/blog-frontend");
 const staticDir = path.join(__dirname, "/static");
 const pathToPublicKey = process.env.JWT_PUBLIC_KEY_PATH;
