@@ -76,7 +76,7 @@ app.use(passport.initialize()); // Initialize passport object for all requests (
  * Middleware
  */
 app.use('/', httpsRedirect()); // Https redirection
-app.use(express.static(distDir)); // Serve angular frontend
+// app.use(express.static(distDir)); // Serve angular frontend
 app.use(express.static(staticDir)); // Serve static files
 app.use(compression()); // Compress all routes
 app.use(express.json({ limit: '50mb' })); // Limit json sent to server
