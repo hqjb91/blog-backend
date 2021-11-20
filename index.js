@@ -99,7 +99,7 @@ const p0 = mongoClient.connect();
 
 Promise.all([p0]).then( () => {
 
-    http.createServer(app).listen(HTTP_PORT, () => {
+    http.createServer(app).listen(HTTP_BACKEND_PORT, () => {
         console.log(`Application started on port ${HTTP_BACKEND_PORT} at ${new Date()}`)
       })
 
