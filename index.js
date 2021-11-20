@@ -14,6 +14,12 @@ const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const ObjectId = require('mongodb').ObjectID;
+const rateLimit = require("express-rate-limit");
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+  });
 
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
@@ -30,9 +36,9 @@ const articleRoutes = require('./routes/article');
 /**
  * Initialize variables
  */
-const HTTPS_PORT = parseInt(process.env.HTTPS_BACKEND_PORT) || 8443;
-const HTTP_PORT = parseInt(process.env.HTTP_BACKEND_PORT) || 880;
-const distDir = path.join(__dirname, "/dist/blog-frontend");
+const HTTPS_BACKEND_PORT = parseInt(process.env.HTTPS_BACKEND_PORT) || 8443;
+const HTTP_BACKEND_PORT = parseInt(process.env.HTTP_BACKEND_PORT) || 880;
+// const distDir = path.join(__dirname, "/dist/blog-frontend");
 const staticDir = path.join(__dirname, "/static");
 const pathToPublicKey = process.env.JWT_PUBLIC_KEY_PATH;
 const PUBLIC_KEY = fs.readFileSync(pathToPublicKey, 'utf8');
@@ -84,6 +90,7 @@ app.use(cors()); // Allow for CORS
 
 app.use('/api/user', userRoutes(mongoClient));
 app.use('/api/article', articleRoutes(mongoClient));
+app.use(limiter);
 
 /**
  * Connect to MongoDB and Start server on port
@@ -93,7 +100,7 @@ const p0 = mongoClient.connect();
 Promise.all([p0]).then( () => {
 
     http.createServer(app).listen(HTTP_PORT, () => {
-        console.log(`Application started on port ${HTTP_PORT} at ${new Date()}`)
+        console.log(`Application started on port ${HTTP_BACKEND_PORT} at ${new Date()}`)
       })
 
     try {
@@ -106,7 +113,7 @@ Promise.all([p0]).then( () => {
                 },
                 app
             ).listen(HTTPS_PORT, () => {
-                console.info(`Application started on port ${HTTPS_PORT} at ${new Date()}`);
+                console.info(`Application started on port ${HTTPS_BACKEND_PORT} at ${new Date()}`);
             });
         }
     } catch(e) {
